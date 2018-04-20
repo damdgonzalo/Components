@@ -1,47 +1,31 @@
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.LinkedList;
+import java.sql.DriverManager;
+import java.util.Arrays;
 import java.util.List;
 
-
 public class Main {
-	private Connection conn;
-	private Statement stmt;
-	
-	private int comptadorNotes;
-	
-	public Main(Connection conn, Statement stmt) throws Exception {
-		this.conn = conn;
-		this.stmt = stmt;
-	
-		comptarNotesInicials();
+
+	public static void main(String[] args) throws Exception {
+		Class.forName("org.postgresql.Driver");
+		
+		Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/penpals", "postgres", "root");
+		connection.setAutoCommit(true);
+		if (connection!=null) System.out.println("-> Connexió establerta amb la base de dades.");
+		
+		
+		List<String> grups = Arrays.asList("DAM1");
+		ConnexioNotes conn = new ConnexioNotes(connection, grups);
+		
+		
+		
+		
+		System.out.println(conn.hiHaNotesNoves());
+		
+		Thread.sleep(10000); //afegir nota nova
+		
+		System.out.println(conn.hiHaNotesNoves());
+		
+
 	}
-	
-//----------------------------------------------------------------------------------------------------------------------
-	
-	public boolean hiHaNotesNoves() throws Exception {
-		stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS \"comptNotes\"FROM \"Notes\"");
-		rs.next();
-		
-		int comptNotesNou = rs.getInt("comptNotes");
-		
-		if (comptNotesNou > comptadorNotes) {
-			comptadorNotes = comptNotesNou;
-			return true;
-		}
-		
-		return false;
-	}
-	
-	
-	
-	private void comptarNotesInicials() throws Exception {
-		stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS \"comptNotes\"FROM \"Notes\"");
-		rs.next();
-		
-		comptadorNotes = rs.getInt("comptNotes");
-	}
+
 }
