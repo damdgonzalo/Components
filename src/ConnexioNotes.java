@@ -55,7 +55,7 @@ public class ConnexioNotes {
 		List<Nota> llistaNotes = new LinkedList<>();
 		
 		stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT \"idNota\" FROM \"GrupsNota\"W");
+		ResultSet rs = stmt.executeQuery("SELECT \"idNota\" FROM \"GrupsNota\" W");
 		rs.next();
 		
 		return llistaNotes;

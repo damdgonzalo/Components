@@ -17,15 +17,11 @@ public class Main {
 		ConnexioNotes conn = new ConnexioNotes(connection, grups);
 		
 		
-		
-		
 		System.out.println(conn.hiHaNotesNoves());
 		
 		Thread.sleep(10000); //afegir nota nova
 		
 		System.out.println(conn.hiHaNotesNoves());
 		
-
 	}
-
 }
