@@ -12,6 +12,11 @@ public class Nota {
 	
 	public Nota() {
 		etiquetes = new LinkedList<>();
+		titol = "";
+		text = "";
+		dataPublicacio = "";
+		dataUltModificacio = "";
+		autor = "";
 	}
 
 	public String getTitol() {

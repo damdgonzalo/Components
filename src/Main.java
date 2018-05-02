@@ -16,12 +16,21 @@ public class Main {
 		List<String> grups = Arrays.asList("DAM1");
 		ConnexioNotes conn = new ConnexioNotes(connection, grups);
 		
+				
+		Thread.sleep(3000); //Afegir nota nova
 		
-		System.out.println(conn.hiHaNotesNoves());
+		boolean hiHaNoves = conn.hiHaNotesNoves();
 		
-		Thread.sleep(10000); //afegir nota nova
+		if (hiHaNoves) {
+			System.out.println("\nNotes noves:");
 		
-		System.out.println(conn.hiHaNotesNoves());
+			List<Nota> llistaNotesNoves = conn.getNotesNoves();
+			for (int i=0; i<llistaNotesNoves.size(); i++) {
+				System.out.println("   - " + llistaNotesNoves.get(i).getTitol() + " - " + llistaNotesNoves.get(i).getText());
+			}
+		}
+		
+		else System.out.println ("\nNo hi ha notes noves");
 		
 	}
 }
