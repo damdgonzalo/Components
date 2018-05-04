@@ -32,5 +32,8 @@ public class Main {
 		
 		else System.out.println ("\nNo hi ha notes noves");
 		
+		Nota n = conn.getNota("\n4");
+		System.out.println(n.getTitol() + " - " + n.getText());
+		
 	}
 }

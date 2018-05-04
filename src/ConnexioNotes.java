@@ -11,7 +11,6 @@ public class ConnexioNotes implements IConnexioNotes{
 	
 	private int comptadorNotes;
 	private int comptadorNotesVell;
-	private int notesNoves;
 	
 	private List<String> grups;
 	
@@ -27,8 +26,6 @@ public class ConnexioNotes implements IConnexioNotes{
 	
 		comptadorNotes = comptarNotesActuals();
 		comptadorNotesVell = comptadorNotes;
-		
-		notesNoves = 0;
 	}
 	
 //----------------------------------------------------------------------------------------------------------------------
@@ -58,7 +55,7 @@ public class ConnexioNotes implements IConnexioNotes{
 //----------------------------------------------------------------------------------------------------------------------
 
 	/**
-	 * Retorna una llista amb totes les notes que hi ha als grups als que pertany l'usuari
+	 * Retorna una llista amb totes les notes que hi ha als grups que pertany l'usuari
  	 * @return Llista de notes
 	 * @throws Exception
 	 */
@@ -98,15 +95,16 @@ public class ConnexioNotes implements IConnexioNotes{
 //----------------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * Comprova si s'ha penjat alguna nota nova a algun dels grups als que pertany l'usuari
-	 * @return TRUE si hi ha notes noves
-	 * @throws Exception
+	 * Retorna una llista només amb les notes noves que s'han penjat als grups que pertany l'usuari.
+	 * Si no hi ha cap nota nova, retorna una llista buida.
+	 * Es recomana utilitzar sempre després de la funció hiHaNotesNoves() , si aquesta retorna TRUE.
+	 * @return Llista amb les notes noves que té l'usuari
 	 */
 	public List<Nota> getNotesNoves() throws Exception {
-		//String query = "SELECT COUNT(*) AS \"comptNotes\" FROM \"GrupsNota\" WHERE ";
 		String query = "SELECT g.\"idGrup\", n.* FROM \"GrupsNota\" g";
 			  query += " INNER JOIN \"Notes\" n ON g.\"idNota\" = n.\"idNota\" WHERE ";
 		
+		//busca notes noves a cada grup
 		for (int i=0; i<grups.size(); i++) {
 			
 			if (i==grups.size()-1) query += "g.\"idGrup\" = (SELECT \"idGrup\" FROM \"Grups\" WHERE \"nom\"='" + grups.get(i) + "')";
@@ -142,11 +140,12 @@ public class ConnexioNotes implements IConnexioNotes{
 //----------------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * Comprova si hi ha notes noves
-	 * @return TRUE si hi ha notes noves en algun dels grups als que pertany l'usuari
+	 * Comprova si hi ha notes noves en algun dels grups als que pertany l'usuari
+	 * @return TRUE si l'usuari té notes noves
 	 */
 	public boolean hiHaNotesNoves() throws Exception {		
 		int notesActuals = comptarNotesActuals();
+		
 		if (notesActuals != 0) {
 			if (notesActuals > comptadorNotes) return true;
 		}
