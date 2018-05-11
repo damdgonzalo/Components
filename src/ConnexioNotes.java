@@ -4,7 +4,39 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * <b>DESCRIPCIÓ</b></br>
+ * Component per enviar i rebre notes.
+ *</br></br>
+ * <b>REQUERIMENTS</b></br>
+ * La base de dades ha de tenir les següents taules: </br>
+ *		- Taula "Notes" ( </br>
+ *			&emsp;&emsp; idNota <code>INTEGER</code>,</br>
+ *			&emsp;&emsp; titol  <code>VARCHAR(30)</code>,</br>
+ *			&emsp;&emsp; dataCreacio  <code>DATE</code>,</br>
+ *			&emsp;&emsp; ultimaModificacio  <code>DATE</code>,</br>
+ *			&emsp;&emsp; cos  <code>TEXT</code>,</br>
+ *			&emsp;&emsp; autor  <code>VARCHAR(20),</code></br>
+ *			&emsp;&emsp; <code>PRIMARY KEY</code> (idNota)</br>
+ *			)</br></br>
+ *
+ *		- Taula "Grups" ( </br>
+ *			&emsp;&emsp; idGrup  <code>INTEGER</code>,</br>
+ *			&emsp;&emsp; nom  <code>VARCHAR(30)</code>,</br>
+ *			&emsp;&emsp; administrador  <code>VARCHAR(20)</code>,</br>
+ *			&emsp;&emsp; dataCreacio  <code>DATE</code></br>
+ *			&emsp;&emsp; <code>PRIMARY KEY</code> (idGrup)</br>
+ *			)</br></br>
+ *
+ * 		- Taula "GrupsNota" ( </br>
+ *			&emsp;&emsp; idGrup  <code>INTEGER</code>,</br>
+ *			&emsp;&emsp; idNota  <code>INTEGER</code>,</br>
+ *			&emsp;&emsp; <code>PRIMARY KEY</code> (idGrup, idNota),</br>
+ *			&emsp;&emsp; <code>FOREIGN KEY</code> (idGrup) <code>REFERENCES</code> Grups(idGrup),</br>
+ *			&emsp;&emsp; <code>FOREIGN KEY</code> (idNota) <code>REFERENCES</code> Nota(idNota)</br>
+ *			)</br></br>
+ *
+ */
 public class ConnexioNotes implements IConnexioNotes{
 	private Connection conn;
 	private Statement stmt;
@@ -16,7 +48,7 @@ public class ConnexioNotes implements IConnexioNotes{
 	
 	/**
 	 * Constructor
-	 * @param conn Connexió
+	 * @param conn Connexió amb la base de dades
 	 * @param grups Llista amb els noms dels grups als que pertany l'usuari
 	 * @throws Exception
 	 */
@@ -157,7 +189,7 @@ public class ConnexioNotes implements IConnexioNotes{
 //----------------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * Compta les notes que hi ha a la base de dades
+	 * Compta les notes que hi ha a la base de dades als grups als que pertany l'usuari
 	 * @return Número de notes que hi ha en un moment determinat
 	 */
 	public int comptarNotesActuals() throws Exception {
@@ -175,7 +207,6 @@ public class ConnexioNotes implements IConnexioNotes{
 		
 		int notesInicials = rs.getInt("comptNotes");
 		
-		//System.out.println("Notes actuals: " + notesInicials);
 		return notesInicials;
 	}
 }

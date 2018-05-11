@@ -1,5 +1,8 @@
 import java.util.List;
 
+/**
+ * Interfície de la classe ConnexioNotes
+ */
 public interface IConnexioNotes {
 	
 	public Nota getNota(String idNota) throws Exception; 

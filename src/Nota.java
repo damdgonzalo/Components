@@ -66,6 +66,4 @@ public class Nota {
 	public void setEtiquetes(List<String> etiquetes) {
 		this.etiquetes = etiquetes;
 	}
-	
-	
 }
