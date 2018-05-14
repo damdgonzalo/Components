@@ -1,7 +1,7 @@
 import java.util.List;
 
 /**
- * Interfície de la classe ConnexioNotes
+ * Interfï¿½cie de la classe ConnexioNotes
  */
 public interface IConnexioNotes {
 	
@@ -10,4 +10,6 @@ public interface IConnexioNotes {
 	public List<Nota> getNotes() throws Exception;
 	public boolean hiHaNotesNoves() throws Exception;
 	public int comptarNotesActuals() throws Exception;
+	
+	public List<String> getGrupsUsuari() throws Exception;
 }

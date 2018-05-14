@@ -6,16 +6,18 @@ import java.util.List;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
+		
+		String usuariConnectat = "dgonzalo";
 		Class.forName("org.postgresql.Driver");
 		
 		Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/penpals", "postgres", "root");
 		connection.setAutoCommit(true);
-		if (connection!=null) System.out.println("-> ConnexiÛ establerta amb la base de dades.");
+		if (connection!=null) System.out.println("-> Connexi√≥ establerta amb la base de dades.");
 		
 		
-		List<String> grups = Arrays.asList("DAM1");
-		ConnexioNotes conn = new ConnexioNotes(connection, grups);
-		
+		//List<String> grups = Arrays.asList("DAM1");
+		//ConnexioNotes conn = new ConnexioNotes(connection, grups);
+		ConnexioNotes conn = new ConnexioNotes(connection, usuariConnectat);
 				
 		Thread.sleep(3000); //Afegir nota nova
 		

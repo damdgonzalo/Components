@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * <b>DESCRIPCIÓ</b></br>
+ * <b>DESCRIPCIÃ“</b></br>
  * Component per enviar i rebre notes.
  *</br></br>
  * <b>REQUERIMENTS</b></br>
- * La base de dades ha de tenir les següents taules: </br>
+ * La base de dades ha de tenir les segÃ¼ents taules: </br>
  *		- Taula "Notes" ( </br>
  *			&emsp;&emsp; idNota <code>INTEGER</code>,</br>
  *			&emsp;&emsp; titol  <code>VARCHAR(30)</code>,</br>
@@ -36,6 +36,13 @@ import java.util.List;
  *			&emsp;&emsp; <code>FOREIGN KEY</code> (idNota) <code>REFERENCES</code> Nota(idNota)</br>
  *			)</br></br>
  *
+ *		- Taula "GrupsUsuari" ( </br>
+ *			&emsp;&emsp; idGrup  <code>INTEGER</code>,</br>
+ *			&emsp;&emsp; idUsuari  <code>VARCHAR(20)</code>,</br>
+ *			&emsp;&emsp; <code>PRIMARY KEY</code> (idGrup, idUsuari),</br>
+ *			&emsp;&emsp; <code>FOREIGN KEY</code> (idGrup) <code>REFERENCES</code> Grups(idGrup),</br>
+ *			)</br></br>
+ *
  */
 public class ConnexioNotes implements IConnexioNotes{
 	private Connection conn;
@@ -45,10 +52,11 @@ public class ConnexioNotes implements IConnexioNotes{
 	private int comptadorNotesVell;
 	
 	private List<String> grups;
+	private String usuariConnectat;
 	
 	/**
 	 * Constructor
-	 * @param conn Connexió amb la base de dades
+	 * @param conn ConnexiÃ³ amb la base de dades
 	 * @param grups Llista amb els noms dels grups als que pertany l'usuari
 	 * @throws Exception
 	 */
@@ -60,10 +68,16 @@ public class ConnexioNotes implements IConnexioNotes{
 		comptadorNotesVell = comptadorNotes;
 	}
 	
+	public ConnexioNotes(Connection conn, String usuariConnectat) throws Exception {
+		this.conn = conn;
+		this.usuariConnectat = usuariConnectat;
+		grups = getGrupsUsuari();
+	}
+	
 //----------------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * Retorna tota la informació d'una nota donada la seva ID
+	 * Retorna tota la informaciÃ³ d'una nota donada la seva ID
 	 * @param idNota ID de la nota que es vol
 	 * @return Dades de la nota
 	 */
@@ -127,10 +141,10 @@ public class ConnexioNotes implements IConnexioNotes{
 //----------------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * Retorna una llista només amb les notes noves que s'han penjat als grups que pertany l'usuari.
+	 * Retorna una llista nomï¿½s amb les notes noves que s'han penjat als grups que pertany l'usuari.
 	 * Si no hi ha cap nota nova, retorna una llista buida.
-	 * Es recomana utilitzar sempre després de la funció hiHaNotesNoves() , si aquesta retorna TRUE.
-	 * @return Llista amb les notes noves que té l'usuari
+	 * Es recomana utilitzar sempre desprï¿½s de la funciï¿½ hiHaNotesNoves() , si aquesta retorna TRUE.
+	 * @return Llista amb les notes noves que tï¿½ l'usuari
 	 */
 	public List<Nota> getNotesNoves() throws Exception {
 		String query = "SELECT g.\"idGrup\", n.* FROM \"GrupsNota\" g";
@@ -173,7 +187,7 @@ public class ConnexioNotes implements IConnexioNotes{
 	
 	/**
 	 * Comprova si hi ha notes noves en algun dels grups als que pertany l'usuari
-	 * @return TRUE si l'usuari té notes noves
+	 * @return TRUE si l'usuari tï¿½ notes noves
 	 */
 	public boolean hiHaNotesNoves() throws Exception {		
 		int notesActuals = comptarNotesActuals();
@@ -190,7 +204,7 @@ public class ConnexioNotes implements IConnexioNotes{
 	
 	/**
 	 * Compta les notes que hi ha a la base de dades als grups als que pertany l'usuari
-	 * @return Número de notes que hi ha en un moment determinat
+	 * @return NÃºmero de notes que hi ha en un moment determinat
 	 */
 	public int comptarNotesActuals() throws Exception {
 		String query = "SELECT COUNT(*) AS \"comptNotes\" FROM \"GrupsNota\" WHERE ";
@@ -209,4 +223,26 @@ public class ConnexioNotes implements IConnexioNotes{
 		
 		return notesInicials;
 	}
+	
+//----------------------------------------------------------------------------------------------------------------------
+	
+
+	/**
+	 * Retorna una llista amb els noms dels grups als quals pertany l'usuari connectat
+	 * @return Llista amb noms de grups existents als que pertany l'usuari
+	 */
+	public List<String> getGrupsUsuari() throws Exception {
+		String query = "SELECT gr.\"nom\" FROM \"Grups\" gr"
+					 + " INNER JOIN \"GrupsUsuaris\" gu ON gr.\"idGrup\"=gu.\"idGrup\""
+					 + " WHERE gu.\"idUsuari\"='" + usuariConnectat + "'";
+		
+		stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(query);
+		
+		List<String> grups = new LinkedList<>();
+		while (rs.next()) grups.add(rs.getString("nom"));
+		
+		return grups;
+	}
+
 }
