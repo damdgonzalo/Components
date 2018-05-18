@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,14 +19,17 @@ public class Main {
 		//List<String> grups = Arrays.asList("DAM1");
 		//ConnexioNotes conn = new ConnexioNotes(connection, grups);
 		ConnexioNotes conn = new ConnexioNotes(connection, usuariConnectat);
-				
-		Thread.sleep(3000); //Afegir nota nova
+		
+		try {
+		Statement stmt = connection.createStatement();
+		stmt.executeQuery("INSERT INTO \"GrupsNota\" VALUES (1,3)");
+		} catch (Exception ignored) {}
+		
 		
 		boolean hiHaNoves = conn.hiHaNotesNoves();
 		
 		if (hiHaNoves) {
-			System.out.println("\nNotes noves:");
-		
+			System.out.println("--- Notes noves ---");
 			List<Nota> llistaNotesNoves = conn.getNotesNoves();
 			for (int i=0; i<llistaNotesNoves.size(); i++) {
 				System.out.println("   - " + llistaNotesNoves.get(i).getTitol() + " - " + llistaNotesNoves.get(i).getText());
@@ -34,7 +38,7 @@ public class Main {
 		
 		else System.out.println ("\nNo hi ha notes noves");
 		
-		Nota n = conn.getNota("\n4");
+		Nota n = conn.getNota("4");
 		System.out.println(n.getTitol() + " - " + n.getText());
 		
 	}
