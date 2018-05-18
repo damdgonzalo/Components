@@ -50,7 +50,7 @@ public class ConnexioNotes implements IConnexioNotes{
 	private Statement stmt;
 
 	private int comptadorNotes;
-	private int comptadorNotesVell;
+	private int comptadorNotesNoves;
 
 	private List<String> grups;
 	private List<String> grupsID;
@@ -62,19 +62,22 @@ public class ConnexioNotes implements IConnexioNotes{
 	 * @param grups Llista amb els noms dels grups als que pertany l'usuari
 	 * @throws Exception
 	 */
-	public ConnexioNotes(Connection conn, List<String> grups) throws Exception {
+	/*public ConnexioNotes(Connection conn, List<String> grups) throws Exception {
 		this.conn = conn;
 		this.grups = grups;
 
 		comptadorNotes = comptarNotesActuals();
-		comptadorNotesVell = comptadorNotes;
-	}
+		comptadorNotesNoves = 0;
+	}*/
 
 	public ConnexioNotes(Connection conn, String usuariConnectat) throws Exception {
 		this.conn = conn;
 		this.usuariConnectat = usuariConnectat;
 		grups = getGrupsUsuari();
 		grupsID = getGrupsUsuariID();
+		
+		comptadorNotes = comptarNotesActuals();
+		comptadorNotesNoves = 0;
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -118,9 +121,7 @@ public class ConnexioNotes implements IConnexioNotes{
 			if (i==grups.size()-1) query += "g.\"idGrup\" = (SELECT \"idGrup\" FROM \"Grups\" WHERE \"nom\"='" + grups.get(i) + "')";
 			else query += "g.\"idGrup\" = (SELECT \"idGrup\" FROM \"Grups\" WHERE \"nom\"='" + grups.get(i) + "') OR ";
 		}
-
-		//System.out.println(query);
-
+		
 		stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(query);
 
@@ -160,7 +161,7 @@ public class ConnexioNotes implements IConnexioNotes{
 			else query += "g.\"idGrup\" = (SELECT \"idGrup\" FROM \"Grups\" WHERE \"nom\"='" + grups.get(i) + "') OR ";
 		}
 
-		query += " ORDER BY n.\"idNota\" DESC LIMIT " + (comptarNotesActuals() - comptadorNotesVell);
+		query += " ORDER BY n.\"idNota\" DESC LIMIT " + (comptadorNotesNoves);
 
 		stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(query);
@@ -168,9 +169,9 @@ public class ConnexioNotes implements IConnexioNotes{
 
 		List<Nota> llistaNotesNoves = new LinkedList<>();
 
-		comptadorNotesVell = comptadorNotes;
+		comptadorNotes += comptadorNotesNoves;
 
-		comptadorNotes = 0;
+		comptadorNotesNoves = 0;
 		while (rs.next()) {
 			Nota notaNova = new Nota();
 			notaNova.setTitol(rs.getString("titol"));
@@ -193,12 +194,15 @@ public class ConnexioNotes implements IConnexioNotes{
 	 * @return TRUE si l'usuari t� notes noves
 	 */
 	public boolean hiHaNotesNoves() throws Exception {		
-		int notesActuals = comptarNotesActuals();
+		int comptadorAux = comptarNotesActuals();
 
-		if (notesActuals != 0) {
-			if (notesActuals > comptadorNotes) return true;
+		if (comptadorAux != 0) {
+			if (comptadorAux > comptadorNotes) {
+				comptadorNotesNoves = comptadorAux - comptadorNotes;
+				return true;
+			}
 		}
-
+		
 		return false;
 	}
 
@@ -222,9 +226,9 @@ public class ConnexioNotes implements IConnexioNotes{
 		ResultSet rs = stmt.executeQuery(query);
 		rs.next();
 
-		int notesInicials = rs.getInt("comptNotes");
+		int notesActuals = rs.getInt("comptNotes");
 
-		return notesInicials;
+		return notesActuals;
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
